@@ -14,7 +14,7 @@ router.route('/login')
 router.route('/change-password')
   .post(authMiddleware, changePassword); // Đổi mật khẩu cần đăng nhập
 
-router.patch('/avatar', authMiddleware, updateAvatar);
-router.patch('/cover-image', authMiddleware, updateCoverImage);
+router.patch('/avatar', authMiddleware, updateAvatar);// Cập nhật ảnh đại diện
+router.patch('/cover-image', authMiddleware, updateCoverImage);// Cập nhật ảnh bìa
 
 export default router;
