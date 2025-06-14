@@ -1,5 +1,5 @@
 import express from 'express';
-import { register, login, changePassword, updateAvatar, updateCoverImage } from '../controllers/user.controller.js';
+import { register, login, changePassword, updateAvatar, updateCoverImage, getProfile, updateProfile } from '../controllers/user.controller.js';
 import validateRegister from '../middlewares/validateRegister.middleware.js';
 import authMiddleware from '../middlewares/auth.middleware.js';
 
@@ -14,7 +14,14 @@ router.route('/login')
 router.route('/change-password')
   .post(authMiddleware, changePassword); // Đổi mật khẩu cần đăng nhập
 
-router.patch('/avatar', authMiddleware, updateAvatar);// Cập nhật ảnh đại diện
-router.patch('/cover-image', authMiddleware, updateCoverImage);// Cập nhật ảnh bìa
+router.route('/avatar')
+  .put(authMiddleware, updateAvatar); // Cập nhật ảnh đại diện
+router.route('/cover-image')
+  .put(authMiddleware, updateCoverImage); // Cập nhật ảnh bìa
 
+
+router.route('/profile')
+  .get(authMiddleware, getProfile) // Lấy thông tin profile
+  .put(authMiddleware, updateProfile); // Cập nhật thông tin profile
+  
 export default router;
