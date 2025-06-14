@@ -30,7 +30,7 @@ const updateCoverImage = async (id, coverImage) =>
   User.findByIdAndUpdate(id, { coverImage }, { new: true });
 
 const updateProfile = async (id, updateData) =>
-  User.findByIdAndUpdate(id, updateData, { new: true });
+  await User.findByIdAndUpdate(id, updateData, { new: true });
 
 export default {
   findByEmailOrPhone,
