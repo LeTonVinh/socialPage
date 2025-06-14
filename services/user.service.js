@@ -85,4 +85,21 @@ const updateCoverImage = async (userId, coverImage) => {
   return await userRepo.updateCoverImage(userId, coverImage);
 };
 
-export default { register, login, changePassword, updateAvatar, updateCoverImage };
+const getProfile = async (userId) => {
+  const user = await userRepo.findById(userId);
+  if (!user) throw new Error('Không tìm thấy user');
+  return user;
+};
+
+const updateProfile = async (userId, updateData) => {
+  // Chỉ cho phép cập nhật một số trường nhất định
+  const allowedFields = ['fullName', 'email', 'phone', 'birthday'];
+  const data = {};
+  allowedFields.forEach(field => {
+    if (updateData[field] !== undefined) data[field] = updateData[field];
+  });
+  if (Object.keys(data).length === 0) throw new Error('Không có dữ liệu cập nhật');
+  return await userRepo.updateProfile(userId, data);
+};
+
+export default { register, login, changePassword, updateAvatar, updateCoverImage, getProfile, updateProfile };
