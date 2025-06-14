@@ -41,4 +41,33 @@ const changePassword = asyncHandler(async (req, res) => {
 });
 
 
-export { register, login, changePassword };
+
+const updateAvatar = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const { avatar } = req.body;
+    const user = await userService.updateAvatar(userId, avatar);
+    res.json({
+      message: 'Cập nhật avatar thành công',
+      avatar: user.avatar
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateCoverImage = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const { coverImage } = req.body;
+    const user = await userService.updateCoverImage(userId, coverImage);
+    res.json({
+      message: 'Cập nhật ảnh bìa thành công',
+      coverImage: user.coverImage
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { register, login, changePassword, updateAvatar, updateCoverImage };
