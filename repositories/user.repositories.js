@@ -23,4 +23,18 @@ const updateImages = async (id, avatar, coverImage) => {
   return await User.findByIdAndUpdate(id, update, { new: true });
 };
 
-export default { findByEmailOrPhone, createUser, findByPhone, findById, updateImages };
+const updateAvatar = async (id, avatar) =>
+  User.findByIdAndUpdate(id, { avatar }, { new: true });
+
+const updateCoverImage = async (id, coverImage) =>
+  User.findByIdAndUpdate(id, { coverImage }, { new: true });
+
+export default {
+  findByEmailOrPhone,
+  createUser,
+  findByPhone,
+  findById,
+  updateImages,
+  updateAvatar,
+  updateCoverImage
+};
