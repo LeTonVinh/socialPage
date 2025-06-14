@@ -16,4 +16,11 @@ const findById = async (userId) => {
   return await User.findById(userId);
 };
 
-export default { findByEmailOrPhone, createUser, findByPhone, findById };
+const updateImages = async (id, avatar, coverImage) => {
+  const update = {};
+  if (avatar !== undefined) update.avatar = avatar;
+  if (coverImage !== undefined) update.coverImage = coverImage;
+  return await User.findByIdAndUpdate(id, update, { new: true });
+};
+
+export default { findByEmailOrPhone, createUser, findByPhone, findById, updateImages };
