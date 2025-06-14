@@ -3,19 +3,19 @@ import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import authRoutes from './routes/user.routes.js';
 import passwordRoutes from './routes/password.routes.js';
+import errorHandler from './middlewares/error.middleware.js';
+const PORT = process.env.PORT || 30001;
 
 dotenv.config(); // Load biến môi trường
-
 connectDB(); // Kết nối database
 
 const app = express();
 
 app.use(express.json()); // Middleware parse JSON
 
-// Đăng ký router cho endpoint /api/auth
+
 app.use('/api/auth', authRoutes);
 app.use('/api/password', passwordRoutes);
-app.use('/api/profileUser', authRoutes); // Đăng ký router cho endpoint /api/users
 
 // Endpoint kiểm tra server
 app.get('/', (req, res) => {
@@ -23,8 +23,8 @@ app.get('/', (req, res) => {
 });
 
 
+app.use(errorHandler);
 
-const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

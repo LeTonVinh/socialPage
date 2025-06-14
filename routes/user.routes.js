@@ -22,6 +22,6 @@ router.route('/cover-image')
 
 router.route('/profile')
   .get(authMiddleware, getProfile) // Lấy thông tin profile user
-  .put(authMiddleware, updateProfile); // Cập nhật thông tin profile user 
+  .put(authMiddleware, updateProfile); // Cập nhật thông tin profile user
 
 export default router;
