@@ -1,17 +1,20 @@
 import express from 'express';
-import { register, login, changePassword } from '../controllers/user.controller.js';
+import { register, login, changePassword, updateAvatar, updateCoverImage } from '../controllers/user.controller.js';
 import validateRegister from '../middlewares/validateRegister.middleware.js';
 import authMiddleware from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
 
-router.route('/register')
+router.route('/register')// Đăng ký tài khoản
   .post(register, validateRegister); // Thêm middleware validateRegister
 
 router.route('/login')
-  .post(login);
+  .post(login);// Đăng nhập 
 
 router.route('/change-password')
   .post(authMiddleware, changePassword); // Đổi mật khẩu cần đăng nhập
+
+router.patch('/avatar', authMiddleware, updateAvatar);
+router.patch('/cover-image', authMiddleware, updateCoverImage);
 
 export default router;
