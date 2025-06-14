@@ -12,4 +12,8 @@ const findByPhone = async (phone) => {
   return await User.findOne({ phone });
 };
 
-export default { findByEmailOrPhone, createUser, findByPhone };
+const findById = async (userId) => {
+  return await User.findById(userId);
+};
+
+export default { findByEmailOrPhone, createUser, findByPhone, findById };
