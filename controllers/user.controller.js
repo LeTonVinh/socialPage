@@ -1,5 +1,6 @@
 import asyncHandler from 'express-async-handler';
 import authService from '../services/user.service.js';
+import authMiddleware from '../middlewares/auth.middleware.js';
 
 const register = asyncHandler(async (req, res) => {
   const user = await authService.register(req.body);
@@ -32,4 +33,12 @@ const login = asyncHandler(async (req, res) => {
   });
 });
 
-export { register, login };
+const changePassword = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+  const { oldPassword, newPassword } = req.body;
+  await authService.changePassword(userId, oldPassword, newPassword);
+  res.json({ message: 'Đổi mật khẩu thành công' });
+});
+
+
+export { register, login, changePassword };

@@ -59,4 +59,20 @@ const login = async ({ phone, password }) => {
   return { user, token };
 };
 
-export default { register, login };
+const changePassword = async (userId, oldPassword, newPassword) => {
+  const user = await userRepo.findById(userId);
+  if (!user) throw new Error('Không tìm thấy tài khoản');
+
+  const isMatch = await bcrypt.compare(oldPassword, user.password);
+  if (!isMatch) throw new Error('Mật khẩu cũ không đúng');
+
+  if (!isStrongPassword(newPassword)) {
+    throw new Error('Mật khẩu mới phải tối thiểu 8 ký tự, gồm chữ hoa, chữ thường và số');
+  }
+
+  user.password = await bcrypt.hash(newPassword, 10);
+  await user.save();
+  return true;
+};
+
+export default { register, login, changePassword };
