@@ -4,7 +4,7 @@ import connectDB from './config/db.js';
 import authRoutes from './routes/user.routes.js';
 import passwordRoutes from './routes/password.routes.js';
 import errorHandler from './middlewares/error.middleware.js';
-const PORT = process.env.PORT || 30001;
+const PORT = process.env.PORT || 3000;
 
 dotenv.config(); // Load biến môi trường
 connectDB(); // Kết nối database
@@ -16,6 +16,7 @@ app.use(express.json()); // Middleware parse JSON
 
 app.use('/api/auth', authRoutes);
 app.use('/api/password', passwordRoutes);
+app.use('/api/users', authRoutes);
 
 // Endpoint kiểm tra server
 app.get('/', (req, res) => {
