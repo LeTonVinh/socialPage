@@ -9,7 +9,7 @@ router.route('/register')// Đăng ký tài khoản
   .post(register, validateRegister); // Thêm middleware validateRegister
 
 router.route('/login')
-  .post(login);// Đăng nhập 
+  .post(login);// Đăng nhập
 
 router.route('/change-password')
   .post(authMiddleware, changePassword); // Đổi mật khẩu cần đăng nhập
@@ -21,7 +21,7 @@ router.route('/cover-image')
 
 
 router.route('/profile')
-  .get(authMiddleware, getProfile) // Lấy thông tin profile
-  .put(authMiddleware, updateProfile); // Cập nhật thông tin profile
-  
+  .get(authMiddleware, getProfile) // Lấy thông tin profile user
+  .put(authMiddleware, updateProfile); // Cập nhật thông tin profile user 
+
 export default router;

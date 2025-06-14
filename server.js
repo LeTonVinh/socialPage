@@ -15,6 +15,7 @@ app.use(express.json()); // Middleware parse JSON
 // Đăng ký router cho endpoint /api/auth
 app.use('/api/auth', authRoutes);
 app.use('/api/password', passwordRoutes);
+app.use('/api/profileUser', authRoutes); // Đăng ký router cho endpoint /api/users
 
 // Endpoint kiểm tra server
 app.get('/', (req, res) => {
