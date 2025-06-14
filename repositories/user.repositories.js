@@ -29,6 +29,9 @@ const updateAvatar = async (id, avatar) =>
 const updateCoverImage = async (id, coverImage) =>
   User.findByIdAndUpdate(id, { coverImage }, { new: true });
 
+const updateProfile = async (id, updateData) =>
+  User.findByIdAndUpdate(id, updateData, { new: true });
+
 export default {
   findByEmailOrPhone,
   createUser,
@@ -36,5 +39,6 @@ export default {
   findById,
   updateImages,
   updateAvatar,
-  updateCoverImage
+  updateCoverImage,
+  updateProfile
 };
