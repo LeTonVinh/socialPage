@@ -2,24 +2,22 @@ import userRepo from '../repositories/user.repositories.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-// Kiểm tra định dạng email
-const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
-// Kiểm tra định dạng số điện thoại (Việt Nam)
-const isValidPhone = (phone) => /^(0|\+84)[0-9]{9,10}$/.test(phone);
-
-// Kiểm tra mật khẩu mạnh (ít nhất 8 ký tự, có chữ hoa, thường, số)
-const isStrongPassword = (password) =>
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/.test(password);
-
+// Đăng ký user mới với kiểm tra định dạng
 const register = async ({ fullName, email, phone, birthday, password, role }) => {
   // Kiểm tra dữ liệu đầu vào
   if (!fullName || !email || !phone || !birthday || !password)
     throw new Error('Vui lòng nhập đầy đủ thông tin');
 
-  if (!isValidEmail(email)) throw new Error('Email không hợp lệ');
-  if (!isValidPhone(phone)) throw new Error('Số điện thoại không hợp lệ');
-  if (!isStrongPassword(password))
+  // Kiểm tra định dạng email
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+    throw new Error('Email không hợp lệ');
+
+  // Kiểm tra định dạng số điện thoại (Việt Nam)
+  if (!/^(0|\+84)[0-9]{9,10}$/.test(phone))
+    throw new Error('Số điện thoại không hợp lệ');
+
+  // Kiểm tra mật khẩu mạnh (ít nhất 8 ký tự, có chữ hoa, thường, số)
+  if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/.test(password))
     throw new Error('Mật khẩu phải tối thiểu 8 ký tự, gồm chữ hoa, chữ thường và số');
 
   // Kiểm tra trùng lặp
