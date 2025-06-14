@@ -1,30 +1,27 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import connectDB from './config/db.js'; 
+import connectDB from './config/db.js';
+import authRoutes from './routes/user.routes.js';
 
-// Kết nối tới MongoDB
-connectDB();
-dotenv.config();
+dotenv.config(); // Load biến môi trường
 
+connectDB(); // Kết nối database
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
+app.use(express.json()); // Middleware parse JSON
 
+// Đăng ký router cho endpoint /api/auth
+app.use('/api/auth', authRoutes);
 
-
-
+// Endpoint kiểm tra server
 app.get('/', (req, res) => {
-  res.send('Hello from Express ES6!');
+  res.send('API is running...');
 });
 
 
 
-
-
-
-
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
