@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import authRoutes from './routes/user.routes.js';
+import passwordRoutes from './routes/password.routes.js';
 
 dotenv.config(); // Load biến môi trường
 
@@ -13,6 +14,7 @@ app.use(express.json()); // Middleware parse JSON
 
 // Đăng ký router cho endpoint /api/auth
 app.use('/api/auth', authRoutes);
+app.use('/api/password', passwordRoutes);
 
 // Endpoint kiểm tra server
 app.get('/', (req, res) => {

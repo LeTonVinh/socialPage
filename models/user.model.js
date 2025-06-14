@@ -7,7 +7,9 @@ const userSchema = new mongoose.Schema({
   birthday:   { type: Date, required: true },
   password:   { type: String, required: true },
   role:       { type: String, enum: ['user', 'admin'], default: 'user' }, // Thêm role
-  createdAt:  { type: Date, default: Date.now }
+  createdAt:  { type: Date, default: Date.now },
+  resetOTP:   { type: String }, // OTP đặt lại mật khẩu
+  resetOTPExpire: { type: Date } // Thời gian hết hạn OTP
 });
 
 const User = mongoose.model('User', userSchema);
