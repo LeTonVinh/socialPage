@@ -75,4 +75,14 @@ const changePassword = async (userId, oldPassword, newPassword) => {
   return true;
 };
 
-export default { register, login, changePassword };
+const updateAvatar = async (userId, avatar) => {
+  if (!avatar) throw new Error('Thiếu dữ liệu avatar');
+  return await userRepo.updateAvatar(userId, avatar);
+};
+
+const updateCoverImage = async (userId, coverImage) => {
+  if (!coverImage) throw new Error('Thiếu dữ liệu coverImage');
+  return await userRepo.updateCoverImage(userId, coverImage);
+};
+
+export default { register, login, changePassword, updateAvatar, updateCoverImage };
