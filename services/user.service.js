@@ -2,7 +2,7 @@ import userRepo from '../repositories/user.repositories.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-// Đăng ký user mới với kiểm tra định dạng
+// Đăng ký user mới với kiểm tra định dạng và trùng lặp
 const register = async ({ fullName, email, phone, birthday, password, role }) => {
   // Kiểm tra dữ liệu đầu vào
   if (!fullName || !email || !phone || !birthday || !password)
@@ -40,6 +40,7 @@ const register = async ({ fullName, email, phone, birthday, password, role }) =>
   return user;
 };
 
+// Đăng nhập bằng số điện thoại và mật khẩu, trả về token JWT
 const login = async ({ phone, password }) => {
   const user = await userRepo.findByPhone(phone);
   if (!user) throw new Error('Số điện thoại không tồn tại');
@@ -57,6 +58,7 @@ const login = async ({ phone, password }) => {
   return { user, token };
 };
 
+// Đổi mật khẩu cho user, kiểm tra mật khẩu cũ và độ mạnh mật khẩu mới
 const changePassword = async (userId, oldPassword, newPassword) => {
   const user = await userRepo.findById(userId);
   if (!user) throw new Error('Không tìm thấy tài khoản');
@@ -73,22 +75,26 @@ const changePassword = async (userId, oldPassword, newPassword) => {
   return true;
 };
 
+// Cập nhật ảnh đại diện cho user
 const updateAvatar = async (userId, avatar) => {
   if (!avatar) throw new Error('Thiếu dữ liệu avatar');
   return await userRepo.updateAvatar(userId, avatar);
 };
 
+// Cập nhật ảnh bìa cho user
 const updateCoverImage = async (userId, coverImage) => {
   if (!coverImage) throw new Error('Thiếu dữ liệu coverImage');
   return await userRepo.updateCoverImage(userId, coverImage);
 };
 
+// Lấy thông tin profile của user theo userId(token)
 const getProfile = async (userId) => {
   const user = await userRepo.findById(userId);
   if (!user) throw new Error('Không tìm thấy user');
   return user;
 };
 
+// Cập nhật thông tin profile cho user với các trường cho phép(token)
 const updateProfile = async (userId, updateData) => {
   // Danh sách các trường cho phép cập nhật
   const allowedFields = [
