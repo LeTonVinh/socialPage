@@ -1,12 +1,35 @@
 import postRepo from '../repositories/post.repositories.js';
+import dotenv from 'dotenv';
+dotenv.config();
 
-
+const MAX_CONTENT_LENGTH = parseInt(process.env.MAX_CONTENT_LENGTH); // Giới hạn độ dài nội dung bài viết lấy từ biến môi trường
+const MAX_IMAGES = parseInt(process.env.MAX_IMAGES); // Giới hạn số lượng ảnh đính kèm lấy từ biến môi trường
+const MAX_POSTS_PER_HOUR = parseInt(process.env.MAX_POSTS_PER_HOUR); // Giới hạn số bài đăng trong 1 giờ lấy từ biến môi trường
 /**
  * Thêm bài viết mới
  * @param {Object} postData - Dữ liệu bài viết
  * @returns {Object} Bài viết đã tạo
  */
-const createPost = async (postData) => postRepo.create(postData);
+const createPost = async (postData) => {
+  // Giới hạn độ dài content
+  if (!postData.content || postData.content.length > MAX_CONTENT_LENGTH) {
+    throw new Error(`Nội dung bài viết tối đa ${MAX_CONTENT_LENGTH} ký tự.`);
+  }
+
+  // Giới hạn số lượng ảnh
+  if (postData.images && postData.images.length > MAX_IMAGES) {
+    throw new Error(`Chỉ được đính kèm tối đa ${MAX_IMAGES} ảnh.`);
+  }
+
+  // Giới hạn số lần đăng bài trong 1 giờ
+  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+  const count = await postRepo.countByAuthorAndTime(postData.author, oneHourAgo);
+  if (count >= MAX_POSTS_PER_HOUR) {
+    throw new Error(`Bạn chỉ được đăng tối đa ${MAX_POSTS_PER_HOUR} bài/giờ.`);
+  }
+
+  return await postRepo.create(postData);
+};
 
 /**
  * Sửa bài viết

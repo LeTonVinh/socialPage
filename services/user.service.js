@@ -1,6 +1,8 @@
 import userRepo from '../repositories/user.repositories.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+dotenv.config(); // Load biến môi trường
 
 // Đăng ký user mới với kiểm tra định dạng và trùng lặp
 const register = async ({ fullName, email, phone, birthday, password, role }) => {
@@ -48,11 +50,11 @@ const login = async ({ phone, password }) => {
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) throw new Error('Sai mật khẩu');
 
-  const expiresIn = process.env.JWT_EXPIRES_IN || '1h'; // Lấy từ env, mặc định 7d
+  const expiresIn = process.env.JWT_EXPIRES_IN; // Lấy từ env
 
   const token = jwt.sign(
     { id: user._id, role: user.role },
-    process.env.JWT_SECRET || 'khong biet', // Lấy từ env, mặc định là 'your_jwt_secret'
+    process.env.JWT_SECRET, // Lấy từ env
     { expiresIn }
   );
   return { user, token };
