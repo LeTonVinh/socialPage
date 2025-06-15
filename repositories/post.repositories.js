@@ -73,6 +73,17 @@ const addShare = async (postId, userId) => {
   return await Post.findByIdAndUpdate(postId, { $addToSet: { shares: userId } }, { new: true });
 };
 
+/**
+ * Đếm số bài viết của author trong khoảng thời gian
+ */
+const countByAuthorAndTime = async (authorId, fromTime) => {
+  return await Post.countDocuments({
+    author: authorId,
+    createdAt: { $gte: fromTime },
+    status: 'active'
+  });
+};
+
 export default {
-  create, update, remove, findById, findAll, addLike, removeLike, addView, addShare
+  create, update, remove, findById, findAll, addLike, removeLike, addView, addShare, countByAuthorAndTime
 };
