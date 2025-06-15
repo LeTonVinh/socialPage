@@ -4,6 +4,8 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config(); // Load biến môi trường
 
+
+
 // Đăng ký user mới với kiểm tra định dạng và trùng lặp
 const register = async ({ fullName, email, phone, birthday, password, role }) => {
   // Kiểm tra dữ liệu đầu vào
@@ -62,6 +64,11 @@ const login = async ({ phone, password }) => {
 
 // Đổi mật khẩu cho user, kiểm tra mật khẩu cũ và độ mạnh mật khẩu mới
 const changePassword = async (userId, oldPassword, newPassword) => {
+  // Hàm kiểm tra mật khẩu mạnh
+  function isStrongPassword(password) {
+  // Tối thiểu 8 ký tự, gồm chữ hoa, chữ thường và số
+  return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/.test(password);
+  }
   const user = await userRepo.findById(userId);
   if (!user) throw new Error('Không tìm thấy tài khoản');
 
