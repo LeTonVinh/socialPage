@@ -55,7 +55,7 @@ const login = async ({ phone, password }) => {
   const expiresIn = process.env.JWT_EXPIRES_IN; // Lấy từ env
 
   const token = jwt.sign(
-    { id: user._id, role: user.role },
+    { id: user._id, role: user.role, tokenVersion: user.tokenVersion },
     process.env.JWT_SECRET, // Lấy từ env
     { expiresIn }
   );
@@ -79,7 +79,9 @@ const changePassword = async (userId, oldPassword, newPassword) => {
     throw new Error('Mật khẩu mới phải tối thiểu 8 ký tự, gồm chữ hoa, chữ thường và số');
   }
 
+  // Hash mật khẩu mới và tăng version token
   user.password = await bcrypt.hash(newPassword, 10);
+  user.tokenVersion = (user.tokenVersion || 0) + 1; // Tăng version
   await user.save();
   return true;
 };

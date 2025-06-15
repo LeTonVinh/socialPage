@@ -25,6 +25,7 @@ const userSchema = new mongoose.Schema({
     // Thêm các mạng xã hội khác nếu cần
   },
   updatedAt: { type: Date, default: Date.now },
+  tokenVersion: { type: Number, default: 0 },
 });
 
 const User = mongoose.model('User', userSchema);
