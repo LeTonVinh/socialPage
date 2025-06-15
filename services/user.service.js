@@ -47,11 +47,11 @@ const login = async ({ phone, password }) => {
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) throw new Error('Sai mật khẩu');
 
-  const expiresIn = process.env.JWT_EXPIRES_IN || '7d'; // Lấy từ env, mặc định 7d
+  const expiresIn = process.env.JWT_EXPIRES_IN || '1h'; // Lấy từ env, mặc định 7d
 
   const token = jwt.sign(
     { id: user._id, role: user.role },
-    process.env.JWT_SECRET ,
+    process.env.JWT_SECRET || 'khong biet', // Lấy từ env, mặc định là 'your_jwt_secret'
     { expiresIn }
   );
   return { user, token };
