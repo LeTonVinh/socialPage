@@ -90,12 +90,29 @@ const getProfile = async (userId) => {
 };
 
 const updateProfile = async (userId, updateData) => {
-  const allowedFields = ['fullName', 'phone', 'birthday'];
+  // Danh sách các trường cho phép cập nhật
+  const allowedFields = [
+    'fullName',
+    'birthday',
+    'gender',
+    'address',
+    'bio',
+    'occupation',
+    'education',
+    'relationshipStatus',
+    'interests',
+    'socialLinks',
+    'avatar',
+    'coverImage'
+  ];
   const data = {};
   allowedFields.forEach(field => {
     if (updateData[field] !== undefined) data[field] = updateData[field];
   });
   if (Object.keys(data).length === 0) throw new Error('Không có dữ liệu cập nhật');
+
+  // Cập nhật thời gian
+  data.updatedAt = new Date();
 
   const user = await userRepo.updateProfile(userId, data);
   if (!user) throw new Error('Không tìm thấy user');
