@@ -76,14 +76,24 @@ const getProfile = asyncHandler(async (req, res) => {
   res.json({
     message: 'Lấy thông tin người dùng thành công',
     user: {
-    id: user._id,
-    fullName: user.fullName,
-    email: user.email,
-    phone: user.phone,
-    birthday: user.birthday,
-    avatar: user.avatar,
-    coverImage: user.coverImage,
-    role: user.role
+      id: user._id,
+      fullName: user.fullName,
+      email: user.email,
+      phone: user.phone,
+      birthday: user.birthday,
+      avatar: user.avatar,
+      coverImage: user.coverImage,
+      role: user.role,
+      gender: user.gender,
+      address: user.address,
+      bio: user.bio,
+      occupation: user.occupation,
+      education: user.education,
+      relationshipStatus: user.relationshipStatus,
+      interests: user.interests,
+      socialLinks: user.socialLinks,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt
     }
   });
 });
@@ -101,7 +111,17 @@ const updateProfile = asyncHandler(async (req, res) => {
       birthday: user.birthday,
       avatar: user.avatar,
       coverImage: user.coverImage,
-      role: user.role
+      role: user.role,
+      gender: user.gender,
+      address: user.address,
+      bio: user.bio,
+      occupation: user.occupation,
+      education: user.education,
+      relationshipStatus: user.relationshipStatus,
+      interests: user.interests,
+      socialLinks: user.socialLinks,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt
     }
   });
 });
