@@ -40,11 +40,33 @@ const updateProfile = async (userId, updateData) => {
 
 /**
  * Tìm user theo ID.
- * @param {String} userId - ID người dùng
- * @returns {Object|null} User nếu tìm thấy, ngược lại trả về null
+ * @param {String} userId - ID người dùng.
+ * @returns {Object|null} User nếu tìm thấy, ngược lại trả về null.
  */
 const findById = async (userId) => {
   return await User.findById(userId);
 };
 
-export default { findByEmailOrPhone, findByPhone, createUser, updateProfile, findById };
+/**
+ * Cập nhật mật khẩu cho user.
+ * @param {String} userId - ID người dùng.
+ * @param {String} hashedPassword - Mật khẩu đã được hash.
+ * @returns {Object|null} User đã cập nhật hoặc null nếu không tìm thấy.
+ */
+const updatePassword = async (userId, hashedPassword) => {
+  return await User.findByIdAndUpdate(userId, { password: hashedPassword }, { new: true });
+};
+
+/**
+ * Kiểm tra mật khẩu hiện tại của user.
+ * @param {String} userId - ID người dùng.
+ * @param {String} password - Mật khẩu cần kiểm tra (chưa hash).
+ * @returns {Boolean} true nếu đúng, false nếu sai.
+ */
+const checkPassword = async (userId, password) => {
+  const user = await User.findById(userId);
+  if (!user) return false;
+  return await user.comparePassword(password);
+};
+
+export default { findByEmailOrPhone, findByPhone, createUser, updateProfile, findById, updatePassword, checkPassword };
