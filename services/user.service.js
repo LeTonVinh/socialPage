@@ -108,8 +108,8 @@ const updateProfile = async (userId, updateData) => {
     'relationshipStatus',
     'interests',
     'socialLinks',
-    'avatar',
-    'coverImage'
+    
+    
   ];
   const data = {};
   allowedFields.forEach(field => {
