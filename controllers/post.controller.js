@@ -55,8 +55,12 @@ const unlikePost = asyncHandler(async (req, res) => {
  * View bài viết
  */
 const viewPost = asyncHandler(async (req, res) => {
-  await postService.viewPost(req.params.id, req.user.id);
-  res.json({ message: 'Đã xem bài viết' });
+  try {
+    const post = await postService.viewPost(req.params.id, req.user.id);
+    res.json({ message: 'Đã xem bài viết', views: post.views.length });
+  } catch (err) {
+    res.status(403).json({ message: err.message });
+  }
 });
 
 /**

@@ -64,14 +64,14 @@ const getAllPosts = async (filter = {}) => postRepo.findAll(filter);
  */
 const likePost = async (postId, userId) => {
   const post = await postRepo.addLike(postId, userId);
-  if (post && post.author.toString() !== userId) {
+  /*if (post && post.author.toString() !== userId) {
     await notificationService.create({
       user: post.author,
       type: 'like',
       from: userId,
       post: postId
     });
-  }
+  }*/
   return post;
 };
 
@@ -89,7 +89,18 @@ const unlikePost = async (postId, userId) => postRepo.removeLike(postId, userId)
  * @param {String} userId - ID người dùng
  * @returns {Object|null} Bài viết đã cập nhật (thêm lượt xem) hoặc null nếu không tìm thấy
  */
-const viewPost = async (postId, userId) => postRepo.addView(postId, userId);
+const viewPost = async (postId, userId) => {
+  const post = await postRepo.findById(postId);
+  if (!post || post.status !== 'active') throw new Error('Bài viết không tồn tại');
+  if (post.privacy === 'private' && post.author.toString() !== userId)
+    throw new Error('Không có quyền xem bài viết này');
+  if (post.privacy === 'follower' && post.author.toString() !== userId) {
+    // TODO: Kiểm tra userId có phải follower của author không
+    // Nếu chưa có logic này, tạm thời chỉ cho phép author xem
+    throw new Error('Chỉ follower mới được xem bài viết này');
+  }
+  return await postRepo.addView(postId, userId);
+};
 
 /**
  * Chia sẻ bài viết

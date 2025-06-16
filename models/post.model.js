@@ -10,7 +10,8 @@ const postSchema = new mongoose.Schema({
   comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
   privacy: { type: String, enum: ['public', 'follower', 'private'], default: 'public' },
   tags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-  status: { type: String, enum: ['active', 'deleted', 'hidden'], default: 'active' }
+  status: { type: String, enum: ['active', 'deleted', 'hidden'], default: 'active' },
+  views: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
 });
 
 export default mongoose.model('Post', postSchema);

@@ -87,7 +87,11 @@ const removeLike = async (postId, userId) => {
  * @returns {Object|null} Bài viết đã cập nhật hoặc null nếu không tìm thấy.
  */
 const addView = async (postId, userId) => {
-  return await Post.findByIdAndUpdate(postId, { $addToSet: { views: userId } }, { new: true });
+  return await Post.findByIdAndUpdate(
+    postId,
+    { $addToSet: { views: userId } }, // chỉ thêm nếu chưa có
+    { new: true }
+  );
 };
 
 /**
