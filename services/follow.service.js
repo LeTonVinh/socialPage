@@ -1,5 +1,5 @@
 // services/follow.service.js
-import followRepo from '../repositories/follow.repository.js';
+import followRepo from '../repositories/follow.repositories.js';
 import User from '../models/user.model.js';
 import notificationService from './notification.service.js';
 
