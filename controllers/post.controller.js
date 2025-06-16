@@ -49,6 +49,16 @@ const getAllPosts = asyncHandler(async (req, res) => {
 });
 
 /**
+ * Lấy tất cả bài viết của tôi
+ * @route GET /posts/my
+ * @access Private
+ */
+const getMyPosts = asyncHandler(async (req, res) => {
+  const posts = await postService.getMyPosts(req.user.id);
+  res.json({ posts });
+});
+
+/**
  * Like bài viết
  * @route POST /posts/:id/like
  * @access Private
@@ -99,6 +109,7 @@ export default {
   updatePost,
   deletePost,
   getAllPosts,
+  getMyPosts,
   likePost,
   unlikePost,
   viewPost,

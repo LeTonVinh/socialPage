@@ -57,6 +57,15 @@ const deletePost = async (postId, userId) => postRepo.remove(postId, userId);
 const getAllPosts = async (filter = {}) => postRepo.findAll(filter);
 
 /**
+ * Lấy tất cả bài viết của người dùng hiện tại
+ * @param {String} userId - ID người dùng
+ * @returns {Array} Danh sách bài viết của người dùng
+ */
+const getMyPosts = async (userId) => {
+  return await postRepo.findAllByCurrentUser(userId);
+};
+
+/**
  * Thích bài viết
  * @param {String} postId - ID bài viết
  * @param {String} userId - ID người dùng
@@ -127,6 +136,6 @@ const sharePost = async (postId, userId, content) => {
 };
 
 export default {
-  createPost, updatePost, deletePost, getAllPosts,
+  createPost, updatePost, deletePost, getAllPosts, getMyPosts,
   likePost, unlikePost, viewPost, sharePost
 };

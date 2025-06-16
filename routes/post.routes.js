@@ -8,7 +8,9 @@ const router = express.Router();
 router.route('/')
   .post(authMiddleware, postController.createPost) // Tạo bài viết
   .get(postController.getAllPosts); // Lấy tất cả bài viết
-  
+// Láy tất cả bài viết của tôi
+router.route('/my')
+  .get(authMiddleware, postController.getMyPosts); // Lấy tất cả bài viết của tôi 
 
 // Sửa, xóa bài viết theo id
 router.route('/:id')

@@ -52,6 +52,12 @@ const findAll = async (filter = {}) =>
     .populate('author', 'fullName avatar')
     .sort({ createdAt: -1 });
 
+// Lấy tất cả bài viết (gốc và share) của chính user
+const findAllByCurrentUser = async (userId) =>
+  Post.find({ status: 'active', author: userId })
+    .populate('sharedPost')
+    .sort({ createdAt: -1 });
+
 /**
  * Thêm lượt thích
  * @param {String} postId - ID bài viết
@@ -107,6 +113,7 @@ export default {
   remove,
   findById,
   findAll,
+  findAllByCurrentUser,
   addLike,
   removeLike,
   addView,
