@@ -8,7 +8,7 @@ const notificationSchema = new mongoose.Schema({
   sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Người gửi thông báo
   type: { 
     type: String, 
-    enum: ['comment', 'reply', 'like_comment', 'mention'], 
+    enum: ['comment', 'reply', 'like_comment', 'mention', 'follow'], // Các loại thông báo
     required: true 
   },
   post: { type: mongoose.Schema.Types.ObjectId, ref: 'Post' },

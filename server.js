@@ -24,7 +24,7 @@ app.use('/api/users', authRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/notifications', notificationRoutes);
-app.use('/api/follow', followRoutes);
+app.use('/api/follows', followRoutes);
 // Endpoint kiểm tra server
 app.get('/', (req, res) => {
   res.send('API is running...');
