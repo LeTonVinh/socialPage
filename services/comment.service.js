@@ -1,25 +1,185 @@
-// services/comment.service.js
-// Service xử lý logic nghiệp vụ bình luận bài viết
+// services/comment.service.js - Enhanced version
 import commentRepo from '../repositories/comment.repositories.js';
+import postRepo from '../repositories/post.repositories.js';
+import notificationService from './notification.service.js';
 
 /**
- * Thêm bình luận cho bài viết
- * @param {String} postId - ID bài viết
- * @param {String} userId - ID người bình luận
- * @param {String} content - Nội dung bình luận
- * @returns {Object} Bình luận vừa được tạo
+ * Thêm comment vào bài viết
  */
-const addComment = async (postId, userId, content) => {
-  return await commentRepo.create({ post: postId, author: userId, content });
+const addComment = async (postId, userId, content, parentCommentId = null) => {
+  // Kiểm tra quyền truy cập bài viết
+  const { hasAccess, post, reason } = await postRepo.checkPostAccess(postId, userId);
+  
+  if (!hasAccess) {
+    throw new Error(reason || 'Không có quyền truy cập bài viết này');
+  }
+  
+  // Nếu là reply comment, kiểm tra parent comment có tồn tại không
+  if (parentCommentId) {
+    const parentComment = await Comment.findById(parentCommentId);
+    if (!parentComment || parentComment.post.toString() !== postId) {
+      throw new Error('Bình luận gốc không tồn tại');
+    }
+  }
+  
+  // Tạo comment
+  const commentData = {
+    content,
+    author: userId,
+    post: postId,
+    parentComment: parentCommentId
+  };
+  
+  const comment = await commentRepo.create(commentData);
+  
+  // Populate thông tin author
+  await comment.populate('author', 'fullName avatar');
+  
+  // Tạo thông báo
+  if (parentCommentId) {
+    // Nếu là reply, thông báo cho tác giả comment gốc
+    const parentComment = await Comment.findById(parentCommentId);
+    if (parentComment.author.toString() !== userId) {
+      await notificationService.createNotification({
+        recipient: parentComment.author,
+        sender: userId,
+        type: 'reply',
+        post: postId,
+        comment: comment._id,
+        message: `đã trả lời bình luận của bạn`
+      });
+    }
+  } else {
+    // Nếu là comment gốc, thông báo cho tác giả bài viết
+    if (post.author._id.toString() !== userId) {
+      await notificationService.createNotification({
+        recipient: post.author._id,
+        sender: userId,
+        type: 'comment',
+        post: postId,
+        comment: comment._id,
+        message: `đã bình luận về bài viết của bạn`
+      });
+    }
+  }
+  
+  return comment;
 };
 
 /**
- * Lấy danh sách bình luận của một bài viết
- * @param {String} postId - ID bài viết
- * @returns {Array} Danh sách bình luận
+ * Lấy comments của bài viết (chỉ comments gốc, không bao gồm replies)
  */
-const getComments = async (postId) => {
-  return await commentRepo.findByPost(postId);
+const getPostComments = async (postId, userId, page = 1, limit = 10) => {
+  // Kiểm tra quyền truy cập bài viết
+  const { hasAccess, reason } = await postRepo.checkPostAccess(postId, userId);
+  
+  if (!hasAccess) {
+    throw new Error(reason || 'Không có quyền truy cập bài viết này');
+  }
+  
+  const comments = await commentRepo.findRootCommentsByPost(postId, page, limit);
+  const totalComments = await commentRepo.countCommentsByPost(postId);
+  
+  return {
+    comments,
+    pagination: {
+      currentPage: page,
+      totalPages: Math.ceil(totalComments / limit),
+      totalComments,
+      hasNext: page * limit < totalComments
+    }
+  };
 };
 
-export default { addComment, getComments };
+/**
+ * Lấy replies của một comment
+ */
+const getCommentReplies = async (commentId, userId, page = 1, limit = 5) => {
+  // Lấy thông tin comment gốc để kiểm tra quyền truy cập post
+  const parentComment = await Comment.findById(commentId);
+  if (!parentComment) {
+    throw new Error('Bình luận không tồn tại');
+  }
+  
+  // Kiểm tra quyền truy cập bài viết
+  const { hasAccess, reason } = await postRepo.checkPostAccess(parentComment.post, userId);
+  
+  if (!hasAccess) {
+    throw new Error(reason || 'Không có quyền truy cập bài viết này');
+  }
+  
+  const replies = await commentRepo.findRepliesByComment(commentId, page, limit);
+  
+  return {
+    replies,
+    pagination: {
+      currentPage: page,
+      totalPages: Math.ceil(parentComment.replyCount / limit),
+      totalReplies: parentComment.replyCount,
+      hasNext: page * limit < parentComment.replyCount
+    }
+  };
+};
+
+/**
+ * Like/Unlike comment
+ */
+const toggleCommentLike = async (commentId, userId) => {
+  // Lấy thông tin comment để kiểm tra quyền truy cập post
+  const comment = await Comment.findById(commentId);
+  if (!comment) {
+    throw new Error('Bình luận không tồn tại');
+  }
+  
+  // Kiểm tra quyền truy cập bài viết
+  const { hasAccess, reason } = await postRepo.checkPostAccess(comment.post, userId);
+  
+  if (!hasAccess) {
+    throw new Error(reason || 'Không có quyền truy cập bài viết này');
+  }
+  
+  const result = await commentRepo.toggleLike(commentId, userId);
+  
+  // Tạo thông báo nếu like (không tạo thông báo khi unlike)
+  if (result.action === 'liked' && comment.author.toString() !== userId) {
+    await notificationService.createNotification({
+      recipient: comment.author,
+      sender: userId,
+      type: 'like_comment',
+      post: comment.post,
+      comment: commentId,
+      message: `đã thích bình luận của bạn`
+    });
+  }
+  
+  return result;
+};
+
+/**
+ * Xóa comment
+ */
+const deleteComment = async (commentId, userId) => {
+  const comment = await Comment.findById(commentId);
+  
+  if (!comment) {
+    throw new Error('Bình luận không tồn tại');
+  }
+  
+  // Chỉ tác giả comment hoặc admin mới có thể xóa
+  if (comment.author.toString() !== userId) {
+    // TODO: Kiểm tra quyền admin nếu cần
+    throw new Error('Bạn không có quyền xóa bình luận này');
+  }
+  
+  await commentRepo.softDelete(commentId);
+  
+  return { message: 'Đã xóa bình luận' };
+};
+
+export default { 
+  addComment, 
+  getPostComments, 
+  getCommentReplies, 
+  toggleCommentLike,
+  deleteComment
+};
