@@ -1,14 +1,26 @@
-// routes/comment.routes.js
-// Router quản lý các endpoint bình luận bài viết
+
+// routes/comment.routes.js - Enhanced version
 import express from 'express';
 import commentController from '../controllers/comment.controller.js';
 import authMiddleware from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
 
-// Thêm bình luận cho bài viết (yêu cầu đăng nhập)
+// === POST COMMENTS ===
+// Thêm comment vào bài viết
 router.post('/:id/comments', authMiddleware, commentController.addComment);
-// Lấy danh sách bình luận của bài viết
-router.get('/:id/comments', commentController.getComments);
+
+// Lấy danh sách comments của bài viết
+router.get('/:id/comments', authMiddleware, commentController.getPostComments);
+
+// === COMMENT ACTIONS ===
+// Lấy replies của một comment
+router.get('/comments/:id/replies', authMiddleware, commentController.getCommentReplies);
+
+// Like/Unlike comment
+router.post('/comments/:id/like', authMiddleware, commentController.toggleCommentLike);
+
+// Xóa comment
+router.delete('/comments/:id', authMiddleware, commentController.deleteComment);
 
 export default router;

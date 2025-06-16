@@ -1,26 +1,88 @@
-// controllers/comment.controller.js
-// Controller quản lý các thao tác bình luận bài viết
+// controllers/comment.controller.js - Enhanced version
 import asyncHandler from 'express-async-handler';
 import commentService from '../services/comment.service.js';
 
 /**
- * Thêm bình luận cho bài viết
+ * Thêm comment vào bài viết
  * @route POST /posts/:id/comments
  * @access Private
  */
 const addComment = asyncHandler(async (req, res) => {
-  const comment = await commentService.addComment(req.params.id, req.user.id, req.body.content);
-  res.status(201).json({ message: 'Đã bình luận', comment });
+  const { content, parentCommentId } = req.body;
+  
+  if (!content || content.trim().length === 0) {
+    return res.status(400).json({ message: 'Nội dung bình luận không được để trống' });
+  }
+  
+  const comment = await commentService.addComment(
+    req.params.id, 
+    req.user.id, 
+    content.trim(),
+    parentCommentId
+  );
+  
+  res.status(201).json({ 
+    message: parentCommentId ? 'Đã trả lời bình luận' : 'Đã bình luận',
+    comment 
+  });
 });
 
 /**
- * Lấy danh sách bình luận của một bài viết
+ * Lấy danh sách comments của bài viết
  * @route GET /posts/:id/comments
- * @access Public
+ * @access Private (cần đăng nhập để kiểm tra quyền truy cập)
  */
-const getComments = asyncHandler(async (req, res) => {
-  const comments = await commentService.getComments(req.params.id);
-  res.json({ comments });
+const getPostComments = asyncHandler(async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  
+  const result = await commentService.getPostComments(req.params.id, req.user.id, page, limit);
+  
+  res.json(result);
 });
 
-export default { addComment, getComments };
+/**
+ * Lấy replies của một comment
+ * @route GET /comments/:id/replies
+ * @access Private
+ */
+const getCommentReplies = asyncHandler(async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 5;
+  
+  const result = await commentService.getCommentReplies(req.params.id, req.user.id, page, limit);
+  
+  res.json(result);
+});
+
+/**
+ * Like/Unlike comment
+ * @route POST /comments/:id/like
+ * @access Private
+ */
+const toggleCommentLike = asyncHandler(async (req, res) => {
+  const result = await commentService.toggleCommentLike(req.params.id, req.user.id);
+  
+  res.json({
+    message: result.action === 'liked' ? 'Đã thích bình luận' : 'Đã bỏ thích bình luận',
+    ...result
+  });
+});
+
+/**
+ * Xóa comment
+ * @route DELETE /comments/:id
+ * @access Private
+ */
+const deleteComment = asyncHandler(async (req, res) => {
+  const result = await commentService.deleteComment(req.params.id, req.user.id);
+  res.json(result);
+});
+
+export default { 
+  addComment, 
+  getPostComments, 
+  getCommentReplies, 
+  toggleCommentLike,
+  deleteComment
+};
