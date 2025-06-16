@@ -1,6 +1,6 @@
 // Repository thao tác với collection Post
 import Post from '../models/post.model.js';
-
+import Follow from '../models/follow.model.js';
 /**
  * Tạo mới một bài viết
  * @param {Object} data - Dữ liệu bài viết (content, images, author, ...)
@@ -107,6 +107,48 @@ const countByAuthorAndTime = async (authorId, fromTime) =>
     status: 'active'
   });
 
+  
+/**
+ * Kiểm tra quyền truy cập bài viết
+ */
+const checkPostAccess = async (postId, userId) => {
+  const post = await Post.findById(postId).populate('author', '_id');
+  
+  if (!post || post.status !== 'active') {
+    return { hasAccess: false, reason: 'Post not found or inactive' };
+  }
+  
+  // Nếu là tác giả bài viết
+  if (post.author._id.toString() === userId) {
+    return { hasAccess: true, post };
+  }
+  
+  // Nếu bài viết là public
+  if (post.privacy === 'public') {
+    return { hasAccess: true, post };
+  }
+  
+  // Nếu bài viết là private
+  if (post.privacy === 'private') {
+    return { hasAccess: false, reason: 'Private post' };
+  }
+  
+  // Nếu bài viết là follower only
+  if (post.privacy === 'follower') {
+    const isFollowing = await Follow.findOne({
+      follower: userId,
+      following: post.author._id
+    });
+    
+    return { 
+      hasAccess: !!isFollowing, 
+      post,
+      reason: !isFollowing ? 'Must follow author to view' : null
+    };
+  }
+  
+  return { hasAccess: false, reason: 'Unknown privacy setting' };
+};
 export default {
   create,
   update,
@@ -118,5 +160,6 @@ export default {
   removeLike,
   addView,
   addShare,
-  countByAuthorAndTime
+  countByAuthorAndTime,
+  checkPostAccess
 };
