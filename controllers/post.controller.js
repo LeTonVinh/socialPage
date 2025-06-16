@@ -1,5 +1,6 @@
 import asyncHandler from 'express-async-handler';
 import postService from '../services/post.service.js';
+import Post from '../models/post.model.js';
 
 /**
  * Tạo bài viết mới
@@ -67,8 +68,9 @@ const viewPost = asyncHandler(async (req, res) => {
  * Share bài viết
  */
 const sharePost = asyncHandler(async (req, res) => {
-  const post = await postService.sharePost(req.params.id, req.user.id);
-  res.json({ message: 'Đã chia sẻ', post });
+  const sharedPost = await postService.sharePost(req.params.id, req.user.id, req.body.content);
+  const populatedPost = await Post.findById(sharedPost._id).populate('sharedPost');
+  res.json({ message: 'Đã chia sẻ bài viết', post: populatedPost });
 });
 
 export default {

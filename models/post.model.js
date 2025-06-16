@@ -11,7 +11,8 @@ const postSchema = new mongoose.Schema({
   privacy: { type: String, enum: ['public', 'follower', 'private'], default: 'public' },
   tags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   status: { type: String, enum: ['active', 'deleted', 'hidden'], default: 'active' },
-  views: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+  views: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  sharedPost: { type: mongoose.Schema.Types.ObjectId, ref: 'Post' },
 });
 
 export default mongoose.model('Post', postSchema);
