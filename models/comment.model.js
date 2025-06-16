@@ -1,12 +1,11 @@
-
 // models/comment.model.js - Enhanced version
 // Model bình luận với khả năng reply (nested comments)
 import mongoose from 'mongoose';
 
 const commentSchema = new mongoose.Schema({
-  content: { type: String, required: true },
-  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  post: { type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true },
+  content: { type: String, required: true }, // Nội dung bình luận
+  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Người bình luận
+  post: { type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true }, // Bài viết liên quan
   
   // Thêm khả năng reply comment
   parentComment: { 

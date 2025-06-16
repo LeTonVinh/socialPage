@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 const followSchema = new mongoose.Schema({
   follower: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Người follow
   following: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Người được follow
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now } // Thời gian follow
 });
 
 // Đảm bảo một user không thể follow một người nhiều lần
