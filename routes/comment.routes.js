@@ -7,7 +7,7 @@ import authMiddleware from '../middlewares/auth.middleware.js';
 const router = express.Router();
 
 // === POST COMMENTS ===
-// Thêm comment vào bài viết
+// Thêm comment vào bài viết và trả lời comment
 router.post('/:id/comments', authMiddleware, commentController.addComment);
 
 // Lấy danh sách comments của bài viết
