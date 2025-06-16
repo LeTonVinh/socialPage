@@ -5,6 +5,7 @@ import authRoutes from './routes/user.routes.js';
 import passwordRoutes from './routes/password.routes.js';
 import errorHandler from './middlewares/error.middleware.js';
 import postRoutes from './routes/post.routes.js';
+import commentRoutes from './routes/comment.routes.js';
 const PORT = process.env.PORT ;
 
 dotenv.config(); // Load biến môi trường
@@ -19,6 +20,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/password', passwordRoutes);
 app.use('/api/users', authRoutes);
 app.use('/api/posts', postRoutes);
+app.use('/api/comments', commentRoutes);
 // Endpoint kiểm tra server
 app.get('/', (req, res) => {
   res.send('API is running...');
