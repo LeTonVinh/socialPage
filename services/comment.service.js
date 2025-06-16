@@ -2,6 +2,7 @@
 import commentRepo from '../repositories/comment.repositories.js';
 import postRepo from '../repositories/post.repositories.js';
 import notificationService from './notification.service.js';
+import Comment from '../models/comment.model.js';
 
 /**
  * Thêm comment vào bài viết
