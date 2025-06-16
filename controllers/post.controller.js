@@ -1,35 +1,47 @@
+// Controller quản lý các thao tác với bài viết
 import asyncHandler from 'express-async-handler';
 import postService from '../services/post.service.js';
 import Post from '../models/post.model.js';
 
 /**
  * Tạo bài viết mới
+ * @route POST /posts
+ * @access Private
  */
 const createPost = asyncHandler(async (req, res) => {
+  // Gọi service để tạo bài viết, truyền thêm author từ token
   const post = await postService.createPost({ ...req.body, author: req.user.id });
   res.status(201).json({ message: 'Tạo bài viết thành công', post });
 });
 
 /**
  * Sửa bài viết
+ * @route PUT /posts/:id
+ * @access Private (chỉ tác giả)
  */
 const updatePost = asyncHandler(async (req, res) => {
+  // Chỉ tác giả mới được sửa bài viết
   const post = await postService.updatePost(req.params.id, req.body, req.user.id);
   if (!post) return res.status(404).json({ message: 'Không tìm thấy hoặc không có quyền sửa' });
   res.json({ message: 'Cập nhật thành công', post });
 });
 
 /**
- * Xóa bài viết
+ * Xóa bài viết (soft delete)
+ * @route DELETE /posts/:id
+ * @access Private (chỉ tác giả)
  */
 const deletePost = asyncHandler(async (req, res) => {
+  // Chỉ tác giả mới được xóa bài viết
   const post = await postService.deletePost(req.params.id, req.user.id);
   if (!post) return res.status(404).json({ message: 'Không tìm thấy hoặc không có quyền xóa' });
   res.json({ message: 'Đã xóa bài viết', post });
 });
 
 /**
- * Lấy tất cả bài viết
+ * Lấy tất cả bài viết (chỉ lấy bài active, public)
+ * @route GET /posts
+ * @access Public
  */
 const getAllPosts = asyncHandler(async (req, res) => {
   const posts = await postService.getAllPosts();
@@ -38,6 +50,8 @@ const getAllPosts = asyncHandler(async (req, res) => {
 
 /**
  * Like bài viết
+ * @route POST /posts/:id/like
+ * @access Private
  */
 const likePost = asyncHandler(async (req, res) => {
   const post = await postService.likePost(req.params.id, req.user.id);
@@ -46,6 +60,8 @@ const likePost = asyncHandler(async (req, res) => {
 
 /**
  * Unlike bài viết
+ * @route POST /posts/:id/unlike
+ * @access Private
  */
 const unlikePost = asyncHandler(async (req, res) => {
   const post = await postService.unlikePost(req.params.id, req.user.id);
@@ -53,7 +69,9 @@ const unlikePost = asyncHandler(async (req, res) => {
 });
 
 /**
- * View bài viết
+ * View bài viết (tăng lượt xem)
+ * @route POST /posts/:id/view
+ * @access Private
  */
 const viewPost = asyncHandler(async (req, res) => {
   try {
@@ -65,15 +83,24 @@ const viewPost = asyncHandler(async (req, res) => {
 });
 
 /**
- * Share bài viết
+ * Share bài viết (tạo bài share mới, trả về cả bài gốc)
+ * @route POST /posts/:id/share
+ * @access Private
  */
 const sharePost = asyncHandler(async (req, res) => {
   const sharedPost = await postService.sharePost(req.params.id, req.user.id, req.body.content);
+  // Populate trường sharedPost để trả về cả bài gốc
   const populatedPost = await Post.findById(sharedPost._id).populate('sharedPost');
   res.json({ message: 'Đã chia sẻ bài viết', post: populatedPost });
 });
 
 export default {
-  createPost, updatePost, deletePost, getAllPosts,
-  likePost, unlikePost, viewPost, sharePost
+  createPost,
+  updatePost,
+  deletePost,
+  getAllPosts,
+  likePost,
+  unlikePost,
+  viewPost,
+  sharePost
 };
