@@ -55,7 +55,7 @@ const findById = async (postId) => {
  * @returns {Array} Danh sách bài viết.
  */
 const findAll = async (filter = {}) => {
-  return await Post.find({ status: 'active', ...filter })
+  return await Post.find({ status: 'active', privacy: 'public', ...filter })
     .populate('author', 'fullName avatar')
     .sort({ createdAt: -1 });
 };
