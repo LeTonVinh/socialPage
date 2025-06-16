@@ -109,9 +109,11 @@ const viewPost = async (postId, userId) => {
  * @returns {Object|null} Bài viết đã chia sẻ hoặc null nếu không tìm thấy
  */
 const sharePost = async (postId, userId) => {
-  const post = await postRepo.addShare(postId, userId);
-  // Tạo bài viết mới trên tường cá nhân nếu muốn
-  return post;
+  const post = await postRepo.findById(postId);
+  if (!post || post.status !== 'active') throw new Error('Bài viết không tồn tại hoặc đã bị xóa');
+  if (post.privacy !== 'public') throw new Error('Chỉ có thể chia sẻ bài viết công khai');
+  // Nếu qua kiểm tra, mới cho phép share
+  return await postRepo.addShare(postId, userId);
 };
 
 export default {
