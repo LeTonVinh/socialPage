@@ -15,8 +15,8 @@ router.route('/my')
 // Sửa, xóa bài viết theo id
 router.route('/:id')
   .put(authMiddleware, postController.updatePost) // Sửa bài viết
-  .delete(authMiddleware, postController.deletePost); // Xóa bài viết
-
+  .delete(authMiddleware, postController.deletePost) // Xóa bài viết
+  .get(authMiddleware,postController.getPostById); // Lấy bài viết theo id
 // Like/Unlike bài viết
 router.route('/:id/like')
   .post(authMiddleware, postController.likePost);

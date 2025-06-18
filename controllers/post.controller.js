@@ -112,6 +112,16 @@ const sharePost = asyncHandler(async (req, res) => {
   res.json({ message: 'Đã chia sẻ bài viết', post: populatedPost });
 });
 
+const getPostById = asyncHandler(async (req, res) => {
+  const post = await Post.findById(req.params.id).populate('author', 'username');
+  if (!post) {
+    res.status(404);
+    throw new Error('Không tìm thấy bài viết');
+  }
+  res.json(post);
+});
+
+
 export default {
   createPost,
   getAllPosts,
@@ -121,5 +131,6 @@ export default {
   likePost,
   unlikePost,
   viewPost,
-  sharePost
+  sharePost,
+  getPostById
 };
