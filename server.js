@@ -8,6 +8,7 @@ import postRoutes from './routes/post.routes.js';
 import commentRoutes from './routes/comment.routes.js';
 import notificationRoutes from './routes/notification.routes.js';
 import followRoutes from './routes/follow.routes.js';
+import cors from 'cors';
 const PORT = process.env.PORT ;
 
 dotenv.config(); // Load biến môi trường
@@ -16,7 +17,10 @@ connectDB(); // Kết nối database
 const app = express();
 
 app.use(express.json()); // Middleware parse JSON
-
+app.use(cors({
+  origin: 'http://localhost:5173', // Cho phép frontend kết nối
+  credentials: true                // Nếu bạn dùng cookie
+}))
 
 app.use('/api/auth', authRoutes);
 app.use('/api/password', passwordRoutes);
