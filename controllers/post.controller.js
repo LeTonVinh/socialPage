@@ -39,14 +39,22 @@ const deletePost = asyncHandler(async (req, res) => {
 });
 
 /**
- * Lấy tất cả bài viết (chỉ lấy bài active, public)
+ * Lấy tất cả bài viết (công khai)
  * @route GET /posts
  * @access Public
+ * @param {number} [page=1] - Số trang (mặc định 1)
+ * @param {number} [limit=10] - Số lượng bài viết mỗi trang (mặc định 10)
+ * @returns {Object} Danh sách bài viết và thông tin phân trang
  */
 const getAllPosts = asyncHandler(async (req, res) => {
-  const posts = await postService.getAllPosts();
-  res.json({ posts });
+  const { page, limit } = req.query;
+  const result = await postService.getPaginatedPosts({
+    page: parseInt(page) || 1,
+    limit: parseInt(limit) || 10
+  });
+  res.status(200).json(result);
 });
+
 
 /**
  * Lấy tất cả bài viết của tôi
@@ -106,10 +114,10 @@ const sharePost = asyncHandler(async (req, res) => {
 
 export default {
   createPost,
-  updatePost,
-  deletePost,
   getAllPosts,
   getMyPosts,
+  updatePost,
+  deletePost,
   likePost,
   unlikePost,
   viewPost,

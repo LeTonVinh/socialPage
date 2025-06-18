@@ -55,6 +55,24 @@ const deletePost = async (postId, userId) => postRepo.remove(postId, userId);
  * @returns {Array} Danh sách bài viết
  */
 const getAllPosts = async (filter = {}) => postRepo.findAll(filter);
+/**
+ * Lấy bài viết phân trang (chỉ lấy bài active)
+ * @param {Object} options - { page, limit, filter }
+ * @returns {Object} Danh sách bài viết và thông tin phân trang
+ */
+const getPaginatedPosts = async ({ page = 1, limit = 10, filter = {} }) => {
+  const skip = (page - 1) * limit;
+  const total = await postRepo.countAll(filter);
+  const posts = await postRepo.findAllPaginated(skip, limit, filter);
+
+  return {
+    total,
+    currentPage: page,
+    totalPages: Math.ceil(total / limit),
+    data: posts
+  };
+};
+
 
 /**
  * Lấy tất cả bài viết của người dùng hiện tại
@@ -137,5 +155,5 @@ const sharePost = async (postId, userId, content) => {
 
 export default {
   createPost, updatePost, deletePost, getAllPosts, getMyPosts,
-  likePost, unlikePost, viewPost, sharePost
+  likePost, unlikePost, viewPost, sharePost, getPaginatedPosts
 };

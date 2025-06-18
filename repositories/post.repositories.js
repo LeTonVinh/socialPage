@@ -149,6 +149,18 @@ const checkPostAccess = async (postId, userId) => {
   
   return { hasAccess: false, reason: 'Unknown privacy setting' };
 };
+
+const countAll = async (filter = {}) => {
+  return await Post.countDocuments({ status: 'active', ...filter });
+};
+
+const findAllPaginated = async (skip, limit, filter = {}) => {
+  return await Post.find({ status: 'active', ...filter })
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
+};
+
 export default {
   create,
   update,
@@ -161,5 +173,7 @@ export default {
   addView,
   addShare,
   countByAuthorAndTime,
-  checkPostAccess
+  countAll,
+  findAllPaginated
+
 };
