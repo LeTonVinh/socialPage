@@ -156,6 +156,7 @@ const countAll = async (filter = {}) => {
 
 const findAllPaginated = async (skip, limit, filter = {}) => {
   return await Post.find({ status: 'active', ...filter })
+  .populate('author', 'fullName avatar') // 👈 BỔ SUNG DÒNG NÀY
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit);
