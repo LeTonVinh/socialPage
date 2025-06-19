@@ -8,7 +8,9 @@ import postRoutes from './routes/post.routes.js';
 import commentRoutes from './routes/comment.routes.js';
 import notificationRoutes from './routes/notification.routes.js';
 import followRoutes from './routes/follow.routes.js';
+import uploadRoute from './routes/upload.js'
 import cors from 'cors';
+
 const PORT = process.env.PORT ;
 
 dotenv.config(); // Load biến môi trường
@@ -29,6 +31,8 @@ app.use('/api/posts', postRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/follows', followRoutes);
+app.use('/api/upload', uploadRoute)
+
 // Endpoint kiểm tra server
 app.get('/', (req, res) => {
   res.send('API is running...');
