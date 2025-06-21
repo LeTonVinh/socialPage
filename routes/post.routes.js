@@ -1,13 +1,16 @@
 import express from 'express';
 import postController from '../controllers/post.controller.js';
 import authMiddleware from '../middlewares/auth.middleware.js';
+import upload from '../config/multer.js'; // Giả sử bạn đã cấu hình multer để upload ảnh
+
 
 const router = express.Router();
 
 // Đăng bài viết mới
 router.route('/')
-    .post(authMiddleware, postController.createPost) // Tạo bài viết
-    .get(authMiddleware, postController.getAllPosts); // Lấy tất cả bài viết
+  .post(authMiddleware, upload.array('images'), postController.createPost)
+  .get(authMiddleware, postController.getAllPosts)
+
 // Láy tất cả bài viết của tôi
 router.route('/my')
     .get(authMiddleware, postController.getMyPosts); // Lấy tất cả bài viết của tôi 

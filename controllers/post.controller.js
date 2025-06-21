@@ -9,10 +9,22 @@ import Post from '../models/post.model.js';
  * @access Private
  */
 const createPost = asyncHandler(async (req, res) => {
-  // Gọi service để tạo bài viết, truyền thêm author từ token
-  const post = await postService.createPost({ ...req.body, author: req.user.id });
+  let images = [];
+  if (req.files && req.files.length > 0) {
+    // Nếu dùng Cloudinary (hoặc storage cloud): dùng path
+    images = req.files.map(f => f.path);
+    // Nếu lưu local thì có thể là f.filename hoặc f.path
+  }
+
+  const post = await postService.createPost({ 
+    ...req.body, 
+    images,    // <-- Lưu mảng URL ảnh
+    author: req.user.id 
+  });
+
   res.status(201).json({ message: 'Tạo bài viết thành công', post });
 });
+
 
 /**
  * Sửa bài viết
