@@ -21,19 +21,24 @@ const create = async (data) => {
 /**
  * Lấy comments gốc của một bài viết (không bao gồm replies)
  */
-const findRootCommentsByPost = async (postId, page = 1, limit = 10) => {
-  const skip = (page - 1) * limit;
-  
-  return await Comment.find({ 
-    post: postId, 
-    parentComment: null, // Chỉ lấy comment gốc
+const findRootCommentsByPost = async (postId, page = 1, limit) => {
+  let query = Comment.find({
+    post: postId,
+    parentComment: null,
     status: 'active'
   })
-  .populate('author', 'fullName avatar')
-  .sort({ createdAt: -1 })
-  .skip(skip)
-  .limit(limit);
+    .populate('author', 'fullName avatar')
+    .sort({ createdAt: -1 });
+
+  if (limit) {
+    // Chỉ phân trang khi có limit
+    const skip = (page - 1) * limit;
+    query = query.skip(skip).limit(limit);
+  }
+
+  return await query;
 };
+
 
 /**
  * Lấy replies của một comment

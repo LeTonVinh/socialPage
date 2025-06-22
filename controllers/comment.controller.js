@@ -33,8 +33,8 @@ const addComment = asyncHandler(async (req, res) => {
  * @access Private (cần đăng nhập để kiểm tra quyền truy cập)
  */
 const getPostComments = asyncHandler(async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
+  const page = parseInt(req.query.page) ;
+  const limit = parseInt(req.query.limit) ;
   
   const result = await commentService.getPostComments(req.params.id, req.user.id, page, limit);
   

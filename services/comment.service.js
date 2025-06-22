@@ -70,7 +70,8 @@ const addComment = async (postId, userId, content, parentCommentId = null) => {
 /**
  * Lấy comments của bài viết (chỉ comments gốc, không bao gồm replies)
  */
-const getPostComments = async (postId, userId, page = 1, limit = 10) => {
+// Sửa hàm này ở comment.service.js
+const getPostComments = async (postId, userId, page = 1, limit) => { // <- bỏ = 10
   // Kiểm tra quyền truy cập bài viết
   const { hasAccess, reason } = await postRepo.checkPostAccess(postId, userId);
   
@@ -78,19 +79,25 @@ const getPostComments = async (postId, userId, page = 1, limit = 10) => {
     throw new Error(reason || 'Không có quyền truy cập bài viết này');
   }
   
-  const comments = await commentRepo.findRootCommentsByPost(postId, page, limit);
+  const comments = await commentRepo.findRootCommentsByPost(postId, page, limit); // <- limit có thể undefined
+
+  // Đếm tổng số comment vẫn được, vì count ko bị limit
   const totalComments = await commentRepo.countCommentsByPost(postId);
-  
-  return {
-    comments,
-    pagination: {
+
+  // Nếu không có limit thì trả về pagination rỗng hoặc null, hoặc tùy bạn
+  let pagination = null;
+  if (limit) {
+    pagination = {
       currentPage: page,
       totalPages: Math.ceil(totalComments / limit),
       totalComments,
       hasNext: page * limit < totalComments
-    }
-  };
+    };
+  }
+
+  return { comments, pagination };
 };
+
 
 /**
  * Lấy replies của một comment
