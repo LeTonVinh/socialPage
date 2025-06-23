@@ -102,7 +102,7 @@ const getPostComments = async (postId, userId, page = 1, limit) => { // <- bỏ 
 /**
  * Lấy replies của một comment
  */
-const getCommentReplies = async (commentId, userId, page = 1, limit = 5) => {
+const getCommentReplies = async (commentId, userId, page = 1, limit ) => {
   // Lấy thông tin comment gốc để kiểm tra quyền truy cập post
   const parentComment = await Comment.findById(commentId);
   if (!parentComment) {

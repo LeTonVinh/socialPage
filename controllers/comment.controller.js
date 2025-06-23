@@ -47,8 +47,8 @@ const getPostComments = asyncHandler(async (req, res) => {
  * @access Private
  */
 const getCommentReplies = asyncHandler(async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 5;
+  const page = parseInt(req.query.page) ;
+  const limit = parseInt(req.query.limit);
   
   const result = await commentService.getCommentReplies(req.params.id, req.user.id, page, limit);
   

@@ -43,7 +43,7 @@ const findRootCommentsByPost = async (postId, page = 1, limit) => {
 /**
  * Lấy replies của một comment
  */
-const findRepliesByComment = async (commentId, page = 1, limit = 5) => {
+const findRepliesByComment = async (commentId, page = 1, limit ) => {
   const skip = (page - 1) * limit;
   
   return await Comment.find({ 
