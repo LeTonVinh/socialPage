@@ -69,4 +69,23 @@ const checkPassword = async (userId, password) => {
   return await user.comparePassword(password);
 };
 
-export default { findByEmailOrPhone, findByPhone, createUser, updateProfile, findById, updatePassword, checkPassword };
+/** Tìm kiếm user theo tên/email */
+const searchUsers = async (query, limit = 10) => {
+  if (!query) return [];
+  return await User.find({
+    $or: [
+      { fullName: { $regex: query, $options: 'i' } },
+      { email: { $regex: query, $options: 'i' } }
+    ]
+  })
+    .select('_id fullName avatar email')
+    .limit(limit);
+};
+
+/** Lấy chi tiết user */
+const getUserById = async (id) => {
+  return await User.findById(id)
+    .select('_id fullName avatar coverImage gender bio occupation education relationshipStatus interests socialLinks');
+};
+
+export default { findByEmailOrPhone, findByPhone, createUser, updateProfile, findById, updatePassword, checkPassword, searchUsers, getUserById };

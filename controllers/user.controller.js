@@ -126,4 +126,17 @@ const updateProfile = asyncHandler(async (req, res) => {
   });
 });
 
-export { register, login, changePassword, updateAvatar, updateCoverImage, getProfile, updateProfile };
+/** GET /api/users/search?query=abc */
+const searchUsers = asyncHandler(async (req, res) => {
+  const { query } = req.query;
+  const users = await userService.searchUsers(query);
+  res.json({ users });
+});
+
+/** GET /api/users/:id */
+const getUserDetail = asyncHandler(async (req, res) => {
+  const user = await userService.getUserDetail(req.params.id, req.user.id);
+  res.json({ user });
+});
+
+export { register, login, changePassword, updateAvatar, updateCoverImage, getProfile, updateProfile, searchUsers, getUserDetail };

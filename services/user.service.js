@@ -136,4 +136,35 @@ const updateProfile = async (userId, updateData) => {
   return user;
 };
 
-export default { register, login, changePassword, updateAvatar, updateCoverImage, getProfile, updateProfile };
+/** Tìm kiếm user */
+const searchUsers = async (query, limit) => {
+  return await userRepo.searchUsers(query, limit);
+
+
+};
+
+/** Lấy chi tiết user */
+const getUserDetail = async (id, currentUserId) => {
+  const user = await userRepo.getUserById(id);
+  if (!user) throw new Error('Không tìm thấy user');
+
+  const isOwner = id === currentUserId;
+  // Trả về thông tin public nếu không phải chủ tài khoản
+  return isOwner
+    ? user
+    : {
+        _id: user._id,
+        fullName: user.fullName,
+        avatar: user.avatar,
+        coverImage: user.coverImage,
+        gender: user.gender,
+        bio: user.bio,
+        occupation: user.occupation,
+        education: user.education,
+        relationshipStatus: user.relationshipStatus,
+        interests: user.interests,
+        socialLinks: user.socialLinks,
+      };
+};
+
+export default { register, login, changePassword, updateAvatar, updateCoverImage, getProfile, updateProfile, searchUsers, getUserDetail };

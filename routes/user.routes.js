@@ -1,7 +1,8 @@
 import express from 'express';
-import { register, login, changePassword, updateAvatar, updateCoverImage, getProfile, updateProfile } from '../controllers/user.controller.js';
+import { register, login, changePassword, updateAvatar, updateCoverImage, getProfile, updateProfile, getUserDetail,   searchUsers } from '../controllers/user.controller.js';
 import validateRegister from '../middlewares/validateRegister.middleware.js';
 import authMiddleware from '../middlewares/auth.middleware.js';
+
 
 const router = express.Router();
 
@@ -24,4 +25,10 @@ router.route('/profile')
   .get(authMiddleware, getProfile) // Lấy thông tin profile user
   .put(authMiddleware, updateProfile); // Cập nhật thông tin profile user
 
+
+router.route('/search')
+ .get(authMiddleware, searchUsers); // Tìm kiếm người dùng
+
+router.route('/:id')
+  .get(authMiddleware, getUserDetail); // Lấy thông tin user theo ID
 export default router;
