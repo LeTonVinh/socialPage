@@ -184,10 +184,63 @@ const deleteComment = async (commentId, userId) => {
   return { message: 'Đã xóa bình luận' };
 };
 
+
+const replyToComment = async (userId, parentCommentId, content) => {
+  // Validate
+  if (!content || !content.trim()) {
+    throw new Error('Nội dung bình luận không được để trống');
+  }
+
+  // Lấy comment gốc
+  const parentComment = await Comment.findById(parentCommentId);
+  if (!parentComment) {
+    throw new Error('Không tìm thấy comment gốc');
+  }
+
+  // Kiểm tra quyền truy cập post
+  const { hasAccess, post, reason } = await postRepo.checkPostAccess(parentComment.post, userId);
+  if (!hasAccess) {
+    throw new Error(reason || 'Không có quyền truy cập bài viết này');
+  }
+
+  // Tạo reply (dùng lại repo cũ)
+  const reply = await commentRepo.create({
+    content,
+    author: userId,
+    post: parentComment.post,
+    parentComment: parentCommentId
+  });
+
+  // Populate author để trả về cho client
+  await reply.populate('author', 'fullName avatar');
+
+  // Gửi notification (nếu muốn)
+  if (parentComment.author.toString() !== userId) {
+    await notificationService.createNotification({
+      recipient: parentComment.author,
+      sender: userId,
+      type: 'reply',
+      post: parentComment.post,
+      comment: reply._id,
+      message: 'đã trả lời bình luận của bạn'
+    });
+  }
+
+  return {
+    message: 'Đã trả lời bình luận',
+    comment: reply
+  };
+};
+
+
+const getCommentById = async (commentId) => {
+  return await Comment.findById(commentId);
+};
 export default { 
   addComment, 
   getPostComments, 
   getCommentReplies, 
   toggleCommentLike,
-  deleteComment
+  deleteComment,
+  replyToComment
 };

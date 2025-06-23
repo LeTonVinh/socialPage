@@ -101,11 +101,16 @@ const softDelete = async (commentId) => {
   );
 };
 
+const findById = async (id) => Comment.findById(id);
+
+
+
 export default { 
   create, 
   findRootCommentsByPost, 
   findRepliesByComment, 
   countCommentsByPost,
   toggleLike,
-  softDelete
+  softDelete,
+  findById
 };

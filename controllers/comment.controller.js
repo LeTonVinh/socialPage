@@ -79,10 +79,21 @@ const deleteComment = asyncHandler(async (req, res) => {
   res.json(result);
 });
 
+// controllers/comment.controller.js
+const replyToComment = asyncHandler(async (req, res) => {
+  const { content } = req.body;
+  // Không xử lý logic ở đây
+  const result = await commentService.replyToComment(req.user.id, req.params.id, content);
+  res.status(201).json(result);
+});
+
+
+
 export default { 
   addComment, 
   getPostComments, 
   getCommentReplies, 
   toggleCommentLike,
-  deleteComment
+  deleteComment,
+  replyToComment
 };
