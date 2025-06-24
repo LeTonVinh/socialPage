@@ -48,6 +48,7 @@
   const findAllByCurrentUser = async(userId) =>
       Post.find({ status: 'active', author: userId })
       .populate('sharedPost')
+      .populate('author', 'fullName avatar')
       .sort({ createdAt: -1 });
 
   /**
