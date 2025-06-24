@@ -20,7 +20,7 @@ router.route('/user/:userId')
 
 // Sửa, xóa bài viết theo id
 router.route('/:id')
-    .put(authMiddleware, postController.updatePost) // Sửa bài viết
+    .put(authMiddleware, upload.array('images'), postController.updatePost) // Sửa bài viết
     .delete(authMiddleware, postController.deletePost) // Xóa bài viết
     .get(authMiddleware, postController.getPostById); // Lấy bài viết theo id
 // Like/Unlike bài viết

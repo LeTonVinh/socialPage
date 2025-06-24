@@ -32,6 +32,10 @@ const createPost = asyncHandler(async(req, res) => {
  * @access Private (chỉ tác giả)
  */
 const updatePost = asyncHandler(async(req, res) => {
+    let images = [];
+    if (req.files && req.files.length > 0) {
+        images = req.files.map(f => f.path);
+    }
     // Chỉ tác giả mới được sửa bài viết
     const post = await postService.updatePost(req.params.id, req.body, req.user.id);
     if (!post) return res.status(404).json({ message: 'Không tìm thấy hoặc không có quyền sửa' });
