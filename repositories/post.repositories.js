@@ -42,6 +42,10 @@
   const findAll = async(filter = {}) =>
       Post.find({ status: 'active', privacy: 'public', ...filter })
       .populate('author', 'fullName avatar')
+      .populate({
+          path: 'sharedPost',
+          populate: { path: 'author', select: 'fullName avatar' }
+      })
       .sort({ createdAt: -1 });
 
   // Lấy tất cả bài viết (gốc và share) của chính user
@@ -150,6 +154,10 @@
   const findAllPaginated = async(skip, limit, filter = {}) => {
       return await Post.find({ status: 'active', privacy: 'public', ...filter })
           .populate('author', 'fullName avatar') // 👈 BỔ SUNG DÒNG NÀY
+          .populate({
+              path: 'sharedPost',
+              populate: { path: 'author', select: 'fullName avatar' }
+          })
           .sort({ createdAt: -1 })
           .skip(skip)
           .limit(limit);
