@@ -89,13 +89,15 @@ const getUserById = async(id) => {
 };
 
 /** Cập nhật ảnh đại diện */
-const updateAvatar = async(userId, avatar) => {
-    return await User.findByIdAndUpdate(userId, { avatar }, { new: true });
+const updateAvatar = async(userId, avatarUrl) => {
+    return await User.findByIdAndUpdate(userId, { avatar: avatarUrl }, { new: true });
 };
 
+
 /** Cập nhật ảnh bìa */
-const updateCoverImage = async(userId, coverImage) => {
-    return await User.findByIdAndUpdate(userId, { coverImage }, { new: true });
+const updateCoverImage = async(userId, coverUrl) => {
+    return await User.findByIdAndUpdate(userId, { coverImage: coverUrl }, { new: true });
 };
+
 
 export default { findByEmailOrPhone, findByPhone, createUser, updateProfile, findById, updatePassword, checkPassword, searchUsers, getUserById, updateAvatar, updateCoverImage };
