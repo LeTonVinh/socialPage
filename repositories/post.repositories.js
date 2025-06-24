@@ -52,6 +52,10 @@
   const findAllByCurrentUser = async(userId) =>
       Post.find({ status: 'active', author: userId })
       .populate('sharedPost')
+      .populate({
+          path: 'sharedPost',
+          populate: { path: 'author', select: 'fullName avatar' }
+      })
       .populate('author', 'fullName avatar')
       .sort({ createdAt: -1 });
 
@@ -170,6 +174,10 @@
   const findAllByUser = async(userId) =>
       Post.find({ author: userId, status: 'active' })
       .populate('author', 'fullName avatar username')
+      .populate({
+          path: 'sharedPost',
+          populate: { path: 'author', select: 'fullName avatar' }
+      })
       .sort({ createdAt: -1 })
 
   export default {
