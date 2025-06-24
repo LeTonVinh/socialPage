@@ -1,5 +1,6 @@
 import postRepo from '../repositories/post.repositories.js';
 import dotenv from 'dotenv';
+import Follow from '../models/follow.model.js'
 dotenv.config();
 
 const MAX_CONTENT_LENGTH = parseInt(process.env.MAX_CONTENT_LENGTH); // Giới hạn độ dài nội dung bài viết lấy từ biến môi trường
@@ -156,6 +157,36 @@ const sharePost = async(postId, userId, content) => {
     return sharedPost;
 };
 
+/**
+ * Lấy bài của 1 user, áp dụng filter privacy
+ * - Nếu viewer === chủ bài (targetUserId) → trả về tất cả
+ * - Nếu khác → chỉ trả public, hoặc follower-only khi viewer follow author
+ */
+const getPostsByUser = async(targetUserId, viewerId) => {
+    // 1) Lấy tất cả bài active của author
+    const posts = await postRepo.findAllByUser(targetUserId)
+
+    // 2) Nếu chính chủ thì trả luôn
+    if (targetUserId === viewerId) {
+        return posts
+    }
+
+    // 3) Kiểm tra viewer có follow author không
+    const follow = await Follow.findOne({
+        follower: viewerId,
+        following: targetUserId
+    })
+    const isFollowing = Boolean(follow)
+
+    // 4) Lọc theo privacy
+    return posts.filter(post => {
+        if (post.privacy === 'public') return true
+        if (post.privacy === 'follower') return isFollowing
+            // post.privacy === 'private'
+        return false
+    })
+}
+
 export default {
     createPost,
     updatePost,
@@ -166,5 +197,6 @@ export default {
     unlikePost,
     viewPost,
     sharePost,
-    getPaginatedPosts
+    getPaginatedPosts,
+    getPostsByUser
 };

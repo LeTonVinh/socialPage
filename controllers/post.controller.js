@@ -8,21 +8,21 @@ import Post from '../models/post.model.js';
  * @route POST /posts
  * @access Private
  */
-const createPost = asyncHandler(async (req, res) => {
-  let images = [];
-  if (req.files && req.files.length > 0) {
-    // Nếu dùng Cloudinary (hoặc storage cloud): dùng path
-    images = req.files.map(f => f.path);
-    // Nếu lưu local thì có thể là f.filename hoặc f.path
-  }
+const createPost = asyncHandler(async(req, res) => {
+    let images = [];
+    if (req.files && req.files.length > 0) {
+        // Nếu dùng Cloudinary (hoặc storage cloud): dùng path
+        images = req.files.map(f => f.path);
+        // Nếu lưu local thì có thể là f.filename hoặc f.path
+    }
 
-  const post = await postService.createPost({ 
-    ...req.body, 
-    images,    // <-- Lưu mảng URL ảnh
-    author: req.user.id 
-  });
+    const post = await postService.createPost({
+        ...req.body,
+        images, // <-- Lưu mảng URL ảnh
+        author: req.user.id
+    });
 
-  res.status(201).json({ message: 'Tạo bài viết thành công', post });
+    res.status(201).json({ message: 'Tạo bài viết thành công', post });
 });
 
 
@@ -31,11 +31,11 @@ const createPost = asyncHandler(async (req, res) => {
  * @route PUT /posts/:id
  * @access Private (chỉ tác giả)
  */
-const updatePost = asyncHandler(async (req, res) => {
-  // Chỉ tác giả mới được sửa bài viết
-  const post = await postService.updatePost(req.params.id, req.body, req.user.id);
-  if (!post) return res.status(404).json({ message: 'Không tìm thấy hoặc không có quyền sửa' });
-  res.json({ message: 'Cập nhật thành công', post });
+const updatePost = asyncHandler(async(req, res) => {
+    // Chỉ tác giả mới được sửa bài viết
+    const post = await postService.updatePost(req.params.id, req.body, req.user.id);
+    if (!post) return res.status(404).json({ message: 'Không tìm thấy hoặc không có quyền sửa' });
+    res.json({ message: 'Cập nhật thành công', post });
 });
 
 /**
@@ -43,11 +43,11 @@ const updatePost = asyncHandler(async (req, res) => {
  * @route DELETE /posts/:id
  * @access Private (chỉ tác giả)
  */
-const deletePost = asyncHandler(async (req, res) => {
-  // Chỉ tác giả mới được xóa bài viết
-  const post = await postService.deletePost(req.params.id, req.user.id);
-  if (!post) return res.status(404).json({ message: 'Không tìm thấy hoặc không có quyền xóa' });
-  res.json({ message: 'Đã xóa bài viết', post });
+const deletePost = asyncHandler(async(req, res) => {
+    // Chỉ tác giả mới được xóa bài viết
+    const post = await postService.deletePost(req.params.id, req.user.id);
+    if (!post) return res.status(404).json({ message: 'Không tìm thấy hoặc không có quyền xóa' });
+    res.json({ message: 'Đã xóa bài viết', post });
 });
 
 /**
@@ -58,13 +58,13 @@ const deletePost = asyncHandler(async (req, res) => {
  * @param {number} [limit=10] - Số lượng bài viết mỗi trang (mặc định 10)
  * @returns {Object} Danh sách bài viết và thông tin phân trang
  */
-const getAllPosts = asyncHandler(async (req, res) => {
-  const { page, limit } = req.query;
-  const result = await postService.getPaginatedPosts({
-    page: parseInt(page) || 1,
-    limit: parseInt(limit) || 10
-  });
-  res.status(200).json(result);
+const getAllPosts = asyncHandler(async(req, res) => {
+    const { page, limit } = req.query;
+    const result = await postService.getPaginatedPosts({
+        page: parseInt(page) || 1,
+        limit: parseInt(limit) || 10
+    });
+    res.status(200).json(result);
 });
 
 
@@ -73,9 +73,9 @@ const getAllPosts = asyncHandler(async (req, res) => {
  * @route GET /posts/my
  * @access Private
  */
-const getMyPosts = asyncHandler(async (req, res) => {
-  const posts = await postService.getMyPosts(req.user.id);
-  res.json({ posts });
+const getMyPosts = asyncHandler(async(req, res) => {
+    const posts = await postService.getMyPosts(req.user.id);
+    res.json({ posts });
 });
 
 /**
@@ -83,9 +83,9 @@ const getMyPosts = asyncHandler(async (req, res) => {
  * @route POST /posts/:id/like
  * @access Private
  */
-const likePost = asyncHandler(async (req, res) => {
-  const post = await postService.likePost(req.params.id, req.user.id);
-  res.json({ message: 'Đã like', post });
+const likePost = asyncHandler(async(req, res) => {
+    const post = await postService.likePost(req.params.id, req.user.id);
+    res.json({ message: 'Đã like', post });
 });
 
 /**
@@ -93,9 +93,9 @@ const likePost = asyncHandler(async (req, res) => {
  * @route POST /posts/:id/unlike
  * @access Private
  */
-const unlikePost = asyncHandler(async (req, res) => {
-  const post = await postService.unlikePost(req.params.id, req.user.id);
-  res.json({ message: 'Đã bỏ like', post });
+const unlikePost = asyncHandler(async(req, res) => {
+    const post = await postService.unlikePost(req.params.id, req.user.id);
+    res.json({ message: 'Đã bỏ like', post });
 });
 
 /**
@@ -103,13 +103,13 @@ const unlikePost = asyncHandler(async (req, res) => {
  * @route POST /posts/:id/view
  * @access Private
  */
-const viewPost = asyncHandler(async (req, res) => {
-  try {
-    const post = await postService.viewPost(req.params.id, req.user.id);
-    res.json({ message: 'Đã xem bài viết', views: post.views.length });
-  } catch (err) {
-    res.status(403).json({ message: err.message });
-  }
+const viewPost = asyncHandler(async(req, res) => {
+    try {
+        const post = await postService.viewPost(req.params.id, req.user.id);
+        res.json({ message: 'Đã xem bài viết', views: post.views.length });
+    } catch (err) {
+        res.status(403).json({ message: err.message });
+    }
 });
 
 /**
@@ -117,32 +117,50 @@ const viewPost = asyncHandler(async (req, res) => {
  * @route POST /posts/:id/share
  * @access Private
  */
-const sharePost = asyncHandler(async (req, res) => {
-  const sharedPost = await postService.sharePost(req.params.id, req.user.id, req.body.content);
-  // Populate trường sharedPost để trả về cả bài gốc
-  const populatedPost = await Post.findById(sharedPost._id).populate('sharedPost');
-  res.json({ message: 'Đã chia sẻ bài viết', post: populatedPost });
+const sharePost = asyncHandler(async(req, res) => {
+    const sharedPost = await postService.sharePost(req.params.id, req.user.id, req.body.content);
+    // Populate trường sharedPost để trả về cả bài gốc
+    const populatedPost = await Post.findById(sharedPost._id).populate('sharedPost');
+    res.json({ message: 'Đã chia sẻ bài viết', post: populatedPost });
 });
 
-const getPostById = asyncHandler(async (req, res) => {
-  const post = await Post.findById(req.params.id).populate('author', 'username');
-  if (!post) {
-    res.status(404);
-    throw new Error('Không tìm thấy bài viết');
-  }
-  res.json(post);
+const getPostById = asyncHandler(async(req, res) => {
+    const post = await Post.findById(req.params.id).populate('author', 'username');
+    if (!post) {
+        res.status(404);
+        throw new Error('Không tìm thấy bài viết');
+    }
+    res.json(post);
 });
+
+/**
+ * @route   GET /api/posts/user/:userId
+ * @access  Public (nếu muốn private thì bổ sung authMiddleware)
+ */
+
+
+/**
+ * GET /api/posts/user/:userId
+ * Trả về danh sách bài của userId, đã apply privacy-filter
+ */
+const getPostsByUser = asyncHandler(async(req, res) => {
+    const targetUserId = req.params.userId
+    const viewerId = req.user.id // từ authMiddleware
+    const posts = await postService.getPostsByUser(targetUserId, viewerId)
+    res.json({ posts })
+})
 
 
 export default {
-  createPost,
-  getAllPosts,
-  getMyPosts,
-  updatePost,
-  deletePost,
-  likePost,
-  unlikePost,
-  viewPost,
-  sharePost,
-  getPostById
+    createPost,
+    getAllPosts,
+    getMyPosts,
+    updatePost,
+    deletePost,
+    likePost,
+    unlikePost,
+    viewPost,
+    sharePost,
+    getPostById,
+    getPostsByUser
 };

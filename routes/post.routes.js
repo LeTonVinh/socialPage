@@ -8,12 +8,15 @@ const router = express.Router();
 
 // Đăng bài viết mới
 router.route('/')
-  .post(authMiddleware, upload.array('images'), postController.createPost)
-  .get(authMiddleware, postController.getAllPosts)
+    .post(authMiddleware, upload.array('images'), postController.createPost)
+    .get(authMiddleware, postController.getAllPosts)
 
 // Láy tất cả bài viết của tôi
 router.route('/my')
     .get(authMiddleware, postController.getMyPosts); // Lấy tất cả bài viết của tôi 
+
+router.route('/user/:userId')
+    .get(authMiddleware, postController.getPostsByUser);
 
 // Sửa, xóa bài viết theo id
 router.route('/:id')

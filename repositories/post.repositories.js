@@ -154,6 +154,15 @@
           .limit(limit);
   };
 
+
+  /**
+   * Lấy tất cả bài viết active của một user
+   */
+  const findAllByUser = async(userId) =>
+      Post.find({ author: userId, status: 'active' })
+      .populate('author', 'fullName avatar username')
+      .sort({ createdAt: -1 })
+
   export default {
       create,
       update,
@@ -168,6 +177,7 @@
       countByAuthorAndTime,
       countAll,
       findAllPaginated,
-      checkPostAccess
+      checkPostAccess,
+      findAllByUser
 
   };
