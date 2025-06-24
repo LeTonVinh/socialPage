@@ -85,7 +85,7 @@ const searchUsers = async(query, limit = 10) => {
 /** Lấy chi tiết user */
 const getUserById = async(id) => {
     return await User.findById(id)
-        .select('_id fullName avatar coverImage gender bio occupation education relationshipStatus interests socialLinks');
+        .select('_id fullName address birthday avatar coverImage gender bio occupation education relationshipStatus interests socialLinks');
 };
 
 /** Cập nhật ảnh đại diện */

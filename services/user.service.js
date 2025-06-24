@@ -150,10 +150,11 @@ const getUserDetail = async(id, currentUserId) => {
     const isOwner = id === currentUserId;
     // Trả về thông tin public nếu không phải chủ tài khoản
     return isOwner ?
-        user :
-        {
+        user : {
             _id: user._id,
             fullName: user.fullName,
+            address: user.address,
+            birthday: user.birthday,
             avatar: user.avatar,
             coverImage: user.coverImage,
             gender: user.gender,
