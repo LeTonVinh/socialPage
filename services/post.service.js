@@ -1,6 +1,7 @@
 import postRepo from '../repositories/post.repositories.js';
 import dotenv from 'dotenv';
 import Follow from '../models/follow.model.js'
+import notificationService from './notification.service.js';
 dotenv.config();
 
 const MAX_CONTENT_LENGTH = parseInt(process.env.MAX_CONTENT_LENGTH); // Giới hạn độ dài nội dung bài viết lấy từ biến môi trường
@@ -95,14 +96,18 @@ const getMyPosts = async(userId) => {
  */
 const likePost = async(postId, userId) => {
     const post = await postRepo.addLike(postId, userId);
-    /*if (post && post.author.toString() !== userId) {
-      await notificationService.create({
-        user: post.author,
-        type: 'like',
-        from: userId,
-        post: postId
-      });
-    }*/
+
+    // Bật thông báo like post
+    if (post && post.author.toString() !== userId) {
+        await notificationService.createNotification({
+            recipient: post.author,
+            sender: userId,
+            type: 'like_post',
+            post: postId,
+            message: 'đã thích bài viết của bạn'
+        });
+    }
+
     return post;
 };
 
@@ -144,16 +149,30 @@ const sharePost = async(postId, userId, content) => {
     const post = await postRepo.findById(postId);
     if (!post || post.status !== 'active') throw new Error('Bài viết không tồn tại hoặc đã bị xóa');
     if (post.privacy !== 'public') throw new Error('Chỉ có thể chia sẻ bài viết công khai');
-    // Tạo bài viết share mới với nội dung mô tả
+
+    // Tạo bài viết share mới
     const sharedPost = await postRepo.create({
         author: userId,
         sharedPost: postId,
-        content: content || '', // nội dung mô tả khi share
+        content: content || '',
         images: [],
         privacy: 'public',
         status: 'active'
     });
+
     await postRepo.addShare(postId, userId);
+
+    // Thêm thông báo share
+    if (post.author.toString() !== userId) {
+        await notificationService.createNotification({
+            recipient: post.author,
+            sender: userId,
+            type: 'share_post',
+            post: postId,
+            message: 'đã chia sẻ bài viết của bạn'
+        });
+    }
+
     return sharedPost;
 };
 
