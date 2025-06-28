@@ -18,7 +18,7 @@ const upload = multer({ storage })
  * @returns {Object} URL của hình ảnh đã upload
  */
 router.post('/', upload.single('image'), (req, res) => {
-    if (!req.file ? .path) {
+    if (!req.file?.path) {
         return res.status(400).json({ message: 'Không có ảnh nào được upload.' })
     }
 
