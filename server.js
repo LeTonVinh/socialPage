@@ -3,6 +3,8 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import connectDB from './config/db.js';
 import errorHandler from './middlewares/error.middleware.js';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
 
 // Import các route modules
 import authRoutes from './routes/user.routes.js';
@@ -33,6 +35,10 @@ app.use(cors({
     credentials: true // Cho phép gửi cookies/session
 }));
 
+// Swagger UI
+const swaggerDocument = YAML.load('./swagger.yaml');
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 // Định nghĩa các route API
 app.use('/api/auth', authRoutes); // Route xác thực người dùng
 app.use('/api/password', passwordRoutes); // Route quản lý mật khẩu
@@ -61,4 +67,5 @@ app.listen(PORT, () => {
     console.log(`🚀 Server đang chạy trên cổng ${PORT}`);
     console.log(`📱 API Documentation: http://localhost:${PORT}`);
     console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`Swagger UI: http://localhost:${PORT}/api-docs`);
 });
